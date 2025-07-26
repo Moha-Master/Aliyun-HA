@@ -1,9 +1,9 @@
 {
     "domain": "aliyun",
     "name": "Alibaba Cloud",
-    "documentation": "https://github.com/your_github_username/aliyun-bill-ha",
-    "issue_tracker": "https://github.com/your_github_username/aliyun-bill-ha/issues",
-    "codeowners": ["@your_github_username"],
+    "documentation": "https://github.com/Moha-Master/Aliyun-HA",
+    "issue_tracker": "https://github.com/Moha-Master/aliyun-HA/issues",
+    "codeowners": ["@Moha-Master"],
     "config_flow": true,
     "iot_class": "cloud_polling",
     "version": "0.1.0",
