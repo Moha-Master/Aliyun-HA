@@ -1,0 +1,13 @@
+{
+    "domain": "aliyun",
+    "name": "Alibaba Cloud",
+    "documentation": "https://github.com/your_github_username/aliyun-bill-ha",
+    "issue_tracker": "https://github.com/your_github_username/aliyun-bill-ha/issues",
+    "codeowners": ["@your_github_username"],
+    "config_flow": true,
+    "iot_class": "cloud_polling",
+    "version": "0.1.0",
+    "requirements": [
+      "alibabacloud_bssopenapi20171214"
+    ]
+  }
