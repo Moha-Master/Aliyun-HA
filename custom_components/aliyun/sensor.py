@@ -34,10 +34,11 @@ async def async_setup_entry(
         for service_code in coordinator.data.get("cost_by_service", {}):
             entities_to_add.append(ServiceCostSensor(coordinator, entry, service_code))
 
-    async_add_entities(entities_to_add)
+    async_add_entities(entities_to_add)        # 先注册实体
+    await coordinator.async_request_refresh()  # 后刷新数据
 
 
-class AliyunBillEntity(CoordinatorEntity[AliyunDataUpdateCoordinator]):
+class AliyunBillEntity(CoordinatorEntity, SensorEntity):
     """Base class for Alibaba Cloud sensors."""
 
     _attr_has_entity_name = True
@@ -56,27 +57,29 @@ class AliyunBillEntity(CoordinatorEntity[AliyunDataUpdateCoordinator]):
             entry_type="service",
         )
 
+    @property
+    def available(self) -> bool:
+        return True
+
 
 class TotalCostSensor(AliyunBillEntity):
     """Sensor for total monthly cost."""
 
     _attr_name = "Current Month Total Cost"
     _attr_native_unit_of_measurement = "CNY"
-    _attr_state_class = SensorStateClass.TOTAL
+    _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_icon = "mdi:cash-multiple"
 
-    def __init__(
-        self, coordinator: AliyunDataUpdateCoordinator, entry: ConfigEntry
-    ) -> None:
-        """Initialize the sensor."""
+    def __init__(self, coordinator, entry):
         super().__init__(coordinator, entry)
         self._attr_unique_id = f"{entry.entry_id}_total_cost"
 
     @property
     def native_value(self) -> float | None:
-        """Return the state of the sensor."""
         if self.coordinator.data:
-            return self.coordinator.data.get("total_cost")
+            val = self.coordinator.data.get("total_cost")
+            if val is not None:
+                return float(val)
         return None
 
     @property
@@ -92,7 +95,7 @@ class TotalTrafficSensor(AliyunBillEntity):
 
     _attr_name = "Current Month Outbound Traffic"
     _attr_native_unit_of_measurement = "GB"
-    _attr_state_class = SensorStateClass.TOTAL_INCREASING
+    _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_icon = "mdi:network-outline"
 
     def __init__(
@@ -114,7 +117,7 @@ class ServiceCostSensor(AliyunBillEntity):
     """Sensor for cost of a specific service."""
 
     _attr_native_unit_of_measurement = "CNY"
-    _attr_state_class = SensorStateClass.TOTAL
+    _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_icon = "mdi:cash"
 
     def __init__(

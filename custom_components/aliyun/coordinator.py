@@ -34,7 +34,5 @@ class AliyunDataUpdateCoordinator(DataUpdateCoordinator):
         This is the place to pre-process the data to lookup tables
         so entities can quickly look up their data.
         """
-        try:
-            return await self.api_client.get_current_month_data()
-        except AliyunApiError as err:
-            raise UpdateFailed(f"Error communicating with API: {err}") from err
+        data = await self.api_client.get_current_month_data()
+        return data

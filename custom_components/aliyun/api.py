@@ -9,7 +9,6 @@ from alibabacloud_bssopenapi20171214.models import DescribeInstanceBillRequest
 from alibabacloud_tea_openapi import models as open_api_models
 from alibabacloud_tea_util.models import RuntimeOptions
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.event import async_get_running_loop
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,7 +33,7 @@ class AliyunBssApiClient:
 
     async def _execute_api_call(self, call, *args, **kwargs):
         """Wrap SDK calls to run them in the executor."""
-        loop = async_get_running_loop()
+        loop = asyncio.get_running_loop()
         return await loop.run_in_executor(None, call, *args, **kwargs)
 
     async def test_authentication(self) -> bool:
@@ -78,10 +77,21 @@ class AliyunBssApiClient:
                 data = response_dict.get('Data', {})
                 if not data:
                     break
-                items_list = data.get('Items', {}).get('Item', [])
+                items_list = []
+                if isinstance(data, dict):
+                    items_list = data.get('Items', [])
+                elif isinstance(data, list):
+                    items_list = data
+                else:
+                    items_list = []
+
                 all_items.extend(items_list)
-                next_token = data.get('NextToken')
-                if not next_token:
+                # 只在 data 是 dict 时才继续，否则直接 break
+                if isinstance(data, dict):
+                    next_token = data.get('NextToken')
+                    if not next_token:
+                        break
+                else:
                     break
             except Exception as e:
                 _LOGGER.error("Failed to fetch billing details for %s: %s", sub_type, e)
@@ -109,12 +119,13 @@ class AliyunBssApiClient:
         # Calculate total traffic
         total_traffic_gb = self._calculate_traffic(all_items)
 
-        return {
+        result = {
             "total_cost": round(total_cost, 2),
             "total_traffic_gb": round(total_traffic_gb, 4),
             "cost_by_service": {k: round(v, 2) for k, v in cost_by_service.items()},
-            "raw_data": all_items # For potential future use or detailed attributes
+            # "raw_data": all_items
         }
+        return result
 
     def _calculate_traffic(self, all_items: List[Dict[str, Any]]) -> float:
         """Calculate total outbound traffic in GB from a list of bill items."""
