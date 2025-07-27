@@ -5,7 +5,8 @@
           "title": "Add Alibaba Cloud Account",
           "data": {
             "access_key_id": "AccessKey ID",
-            "access_key_secret": "AccessKey Secret"
+            "access_key_secret": "AccessKey Secret",
+            "update_interval": "Update Interval (minutes)"
           }
         }
       },

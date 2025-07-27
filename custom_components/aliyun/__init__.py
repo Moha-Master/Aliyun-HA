@@ -21,7 +21,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
 
     # Create a DataUpdateCoordinator
-    coordinator = AliyunDataUpdateCoordinator(hass, api_client=api_client)
+    coordinator = AliyunDataUpdateCoordinator(hass, api_client=api_client, entry=entry)
     
     # Fetch initial data so we have it before entities are set up
     await coordinator.async_config_entry_first_refresh()
@@ -32,6 +32,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Forward the setup to the sensor platform
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
+    # Listen for options updates
+    entry.async_on_unload(entry.add_update_listener(update_listener))
+
     return True
 
 
@@ -41,3 +44,21 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.data[DOMAIN].pop(entry.entry_id)
 
     return unload_ok
+
+
+async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Handle options update."""
+    await hass.config_entries.async_reload(entry)
+
+
+async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Migrate old entry."""
+    _LOGGER.debug("Migrating from version %s", entry.version)
+
+    if entry.version == 1:
+        # No migration needed yet, but good to have the placeholder
+        entry.version = 1
+
+    _LOGGER.debug("Migration to version %s successful", entry.version)
+
+    return True
