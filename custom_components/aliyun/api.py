@@ -113,8 +113,12 @@ class AliyunBssApiClient:
             amount = float(item.get('PretaxAmount', 0.0))
             total_cost += amount
             product_code = item.get('ProductCode', 'Unknown')
-            cost_by_service.setdefault(product_code, 0.0)
-            cost_by_service[product_code] += amount
+            product_name = item.get('ProductName', product_code)  # Use ProductName, fallback to ProductCode
+            
+            if product_code not in cost_by_service:
+                cost_by_service[product_code] = {'cost': 0.0, 'name': product_name}
+            
+            cost_by_service[product_code]['cost'] += amount
 
         # Calculate total traffic
         total_traffic_gb = self._calculate_traffic(all_items)
@@ -122,7 +126,10 @@ class AliyunBssApiClient:
         result = {
             "total_cost": round(total_cost, 2),
             "total_traffic_gb": round(total_traffic_gb, 4),
-            "cost_by_service": {k: round(v, 2) for k, v in cost_by_service.items()},
+            "cost_by_service": {
+                k: {'cost': round(v['cost'], 2), 'name': v['name']}
+                for k, v in cost_by_service.items()
+            },
             # "raw_data": all_items
         }
         return result

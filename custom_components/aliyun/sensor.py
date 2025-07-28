@@ -126,12 +126,18 @@ class ServiceCostSensor(AliyunBillEntity):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
         self.service_code = service_code
-        self._attr_name = f"{service_code} Cost"
+        
+        # Set name from coordinator data, fallback to service_code
+        cost_data = coordinator.data.get("cost_by_service", {}).get(service_code, {})
+        self._attr_name = cost_data.get('name', f"{service_code} Cost")
+        
         self._attr_unique_id = f"{entry.entry_id}_cost_{service_code.lower()}"
 
     @property
     def native_value(self) -> float | None:
         """Return the state of the sensor."""
         if self.coordinator.data and "cost_by_service" in self.coordinator.data:
-            return self.coordinator.data["cost_by_service"].get(self.service_code)
+            service_info = self.coordinator.data["cost_by_service"].get(self.service_code)
+            if service_info:
+                return service_info.get("cost")
         return None
