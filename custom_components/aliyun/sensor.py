@@ -52,7 +52,7 @@ class AliyunBillEntity(CoordinatorEntity, SensorEntity):
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._config_entry.entry_id)},
             name=f"Aliyun Bill ({self._config_entry.data[CONF_ACCESS_KEY_ID]})",
-            manufacturer="Alibaba Cloud",
+            manufacturer="Aliyun",
             model="BSS API",
             entry_type="service",
         )

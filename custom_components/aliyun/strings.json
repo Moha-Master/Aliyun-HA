@@ -2,7 +2,7 @@
     "config": {
       "step": {
         "user": {
-          "title": "Add Alibaba Cloud Account",
+          "title": "Add Aliyun RAM Account",
           "data": {
             "access_key_id": "AccessKey ID",
             "access_key_secret": "AccessKey Secret",
@@ -11,7 +11,7 @@
         }
       },
       "error": {
-        "cannot_connect": "Failed to connect to Alibaba Cloud. Please check your network.",
+        "cannot_connect": "Failed to connect to Aliyun. Please check your network.",
         "invalid_auth": "Invalid AccessKey ID or Secret. Please check your credentials.",
         "unknown": "An unknown error occurred."
       },

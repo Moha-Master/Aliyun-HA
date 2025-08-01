@@ -1,6 +1,6 @@
 {
     "domain": "aliyun",
-    "name": "Alibaba Cloud",
+    "name": "Aliyun",
     "documentation": "https://github.com/Moha-Master/Aliyun-HA",
     "issue_tracker": "https://github.com/Moha-Master/aliyun-HA/issues",
     "codeowners": ["@Moha-Master"],
