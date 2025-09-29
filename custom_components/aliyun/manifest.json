@@ -6,7 +6,7 @@
     "codeowners": ["@Moha-Master"],
     "config_flow": true,
     "iot_class": "cloud_polling",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "requirements": [
       "alibabacloud_bssopenapi20171214"
     ]

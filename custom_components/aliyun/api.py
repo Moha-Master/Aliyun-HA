@@ -139,7 +139,7 @@ class AliyunBssApiClient:
         total_usage_bytes = 0.0
         traffic_items_codes = [
             "ECS_Out_Bytes", "Eip_Out_Bytes", "Cdn_domestic_flow",
-            "Cdn_overseas_flow", "OSS_Out_Traffic"
+            "Cdn_overseas_flow", "OSS_Out_Traffic", "IPv6_Out_Bytes"
         ]
         for item in all_items:
             if item.get('BillingItemCode') in traffic_items_codes:
